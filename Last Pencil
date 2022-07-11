@@ -1,0 +1,81 @@
+import random
+n_pencil = 0
+while n_pencil == 0:
+    try:
+        n_pencil = int(input("How many pencils"))
+        if n_pencil <= 0:
+            print("The number of pencils should be positive")
+    except ValueError:   
+        print("The number of pencils should be numeric")
+     
+possible_player = ["Name1","Name2"]
+starter = ""
+while starter == "" or starter not in possible_player:
+    starter = input("Who will be the first (Name1, Name2)")
+    if starter not in possible_player:
+        print("Choose between Name1 and Name2")
+output = ""
+latter = ""
+
+if starter == "Name1":
+    latter = "Name2"
+else:
+    latter = "Name1"
+
+leftover = n_pencil
+for i in range(1,n_pencil+1):
+    output = output + "|"
+print(output)
+
+#print("it is",starter,"turn!") 
+current_turn = latter
+possible_number = ["1","2","3"]
+loosing_choices = [i for i in range(1,n_pencil+1,4)]
+choice_1 = [i for i in range(2,n_pencil+1,4)]
+choice_2 = [i for i in range(3,n_pencil+1,4)]
+choice_3 = [i for i in range(4,n_pencil+1,4)]
+
+while output != "":
+    if current_turn == starter:
+        current_turn = latter 
+    else:
+        current_turn = starter
+    print("it is",current_turn,"turn!") 
+    tbr = ""
+    counter = 0
+    counter_next = counter + 1
+    
+    if current_turn == "Name1":
+        while tbr not in possible_number: 
+            tbr = input()
+            if tbr not in possible_number :
+                print("Possible values: '1', '2' or '3'")
+        while int(tbr) > leftover:
+            print("Too many pencils were taken")
+            tbr = input()
+        leftover = leftover - int(tbr)
+        output = ""
+        for i in range(1,leftover+1):
+            output = output + "|"
+        print(output)
+    else:
+        if leftover in loosing_choices:
+            tbr = random.randrange(1,min(4,leftover+1))
+        else:
+            if leftover in choice_1:
+                tbr = 1
+            elif leftover in choice_2:
+                tbr = 2
+            elif leftover in choice_3:
+                tbr = 3
+        leftover = leftover - int(tbr)
+        print(tbr)
+        output = ""
+        for i in range(1,leftover+1):
+            output = output + "|"
+        print(output)
+
+if current_turn == latter:
+    print(starter,"won")
+else:
+    print(latter,"won")
