@@ -1,0 +1,82 @@
+import math
+import argparse
+import sys
+
+parser = argparse.ArgumentParser(description="The following software defines the credit structure on you loan")
+parser.add_argument("--type", type=str, help="Define the payment method", choices=["annuity", "diff"])
+parser.add_argument("--principal", type=int, help="Enter the loan amount")
+parser.add_argument("--interest", type=float, help="Define the interest rate")
+parser.add_argument("--payment", type=int, help="Define the monthly payment")
+parser.add_argument("--periods", type=int, help="Define the lenght of the loan in months")
+
+parameters = parser.parse_args()
+if parameters.type == "diff" and parameters.payment != 0:
+    print("Incorrect parameters")
+
+if parameters.interest is None:
+    print("Incorrect parameters")
+    sys.exit()
+
+essential_diff = [parameters.principal, parameters.interest, parameters.periods]
+if parameters.type == "diff" and parameters.principal not in essential_diff or parameters.interest not in essential_diff or parameters.periods not in essential_diff:
+    print("Incorrect parameters")
+
+
+if parameters.principal is not None and parameters.interest is not None and parameters.periods is not None:
+    if parameters.principal < 0 or parameters.interest < 0 or parameters.periods < 0:
+        print("Incorrect parameters")
+overpayment = 0
+if parameters.type == "diff":
+    n = parameters.periods
+    p = parameters.principal
+    i = parameters.interest/1200
+    month = 0
+    a: int = math.ceil(p*i*pow(1+i,n)/(pow(1+i,n)-1))
+    d_m = 0
+    overpayment = 0
+    for m in range(n):
+        month = month + 1
+        d_m = math.ceil(p/n +i*(p-(p*(month-1)/n)))
+        print("Month %d: payment is %d" % (month,d_m))
+        overpayment += d_m-p/n
+    print("Overpayment = %d" % (overpayment))
+elif parameters.type == "annuity":
+    n = parameters.periods
+    p = parameters.principal
+    i = parameters.interest/1200
+    a = parameters.payment
+    while p is None or a is None or n is None:
+        if p is None:
+            p = a/((i*pow(1+i,n))/(pow(1+i,n)-1))
+            print("Your loan principal = %d!" %(p))
+            overpayment = a*n - p
+            print("Overpayment = %d" % (overpayment))
+        elif n is None:
+            n = math.ceil(math.log(a/(a-i*p),1+i))
+            if n > 12:
+                years = n//12
+                months = n-years*12
+                if months == 1:
+                    print("It will take %d years and 1 month to repay this loan!" % (years))
+                    overpayment = a*n - p
+                    print("Overpayment = %d" % (overpayment))
+                else:
+                    print("It will take %d years and %d months to repay this loan!" % (years,months))
+                    overpayment = a*n - p
+                    print("Overpayment = %d" % (overpayment))
+            else:
+                if n != 1:
+                    print("It will take %d months to repay this loan!" % (n))
+                    overpayment = a*n - p
+                    print("Overpayment = %d" % (overpayment))
+                else:
+                    print("It will take 1 month to repay this loan!")
+                    overpayment = a*n - p
+                    print("Overpayment = %d" % (overpayment))
+        elif a is None:
+            a = math.ceil(p*i*pow(1+i , n)/(pow(1+i , n)-1))
+            print("Your monthly payment = %d!" % (a))
+            overpayment = a*n - p
+            print("Overpayment = %d" % (overpayment))
+
+print("test")
