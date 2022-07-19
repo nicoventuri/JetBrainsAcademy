@@ -1,0 +1,37 @@
+import requests
+
+hold = input()
+web = "http://www.floatrates.com/daily/X.json"
+url = web.replace("X",hold)
+#ottengo il link con l'input inserito
+
+table1 = requests.get(url)
+passage = table1.json()
+#dict contenente tutte le currency
+
+change = "eur"
+attempt = 0
+
+EUR_change = passage["eur"]["rate"]
+if hold.lower() != "usd":
+    USD_change = passage["usd"]["rate"]
+    chace = {"usd":USD_change,"eur":EUR_change}
+else:
+    chace = {"eur":EUR_change}
+while change in passage.keys():
+    attempt += 1
+    chace[change] = passage[change]["rate"]
+    change = input()
+    if change == "":
+        break
+    else:
+        amount = float(input())
+        print("Checking the cache...")
+        equivalent = 0
+        if change in chace:
+            print("Oh! It is in the cache!")
+            equivalent = amount*chace[change]
+        else:
+            print("Sorry, but it is not in the cache!")
+            equivalent = amount*passage[change.lower()]["rate"]
+        print("Your received",round(equivalent,2),change.upper()+".")
