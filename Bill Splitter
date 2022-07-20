@@ -1,0 +1,33 @@
+import random
+
+print("Enter the number of friends joining (including you):")
+people = int(input())
+splitter = {}
+if people <= 0:
+    print("No one is joining for the party")
+else:
+    print("Enter the name of every friend (including you), each on a new line:")
+    for x in range(people):
+        person = input()
+        splitter[person] = 0
+    print("Enter the total bill value:")
+    bill = int(input())
+    partial_bill = round(bill/people,2)
+    print("Do you want to use the \"Who is lucky?\" feature? Write Yes/No:")
+    lucky = input()
+    persons = list(splitter.keys())
+    if lucky == "Yes":
+        lucky_person = persons[random.randrange(1,len(splitter))]
+        print("%s  is the lucky one!" % (lucky_person))
+        partial_lucky_bill = round(bill/(people-1),2)
+        for i in persons:
+            if i == lucky_person:
+                splitter[i] = 0
+            else:
+                splitter[i]=partial_lucky_bill
+        print(splitter)
+    else:
+        print("No one is going to be lucky")
+        for i in persons:
+            splitter[i]=partial_bill
+        print(splitter)
